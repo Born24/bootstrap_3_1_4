@@ -33,17 +33,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-
                 .authorizeRequests()
+                .antMatchers("/", "/index", "/login").permitAll() // Разрешаем доступ к странице входа
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().successHandler(successUserHandler)
+                .formLogin()
+                .loginPage("/login") // Страница входа
+                .usernameParameter("email") // Указываем, что используем email как username
+                .passwordParameter("password") // Пароль
+                .successHandler(successUserHandler) // Обработчик успешной аутентификации
                 .permitAll()
                 .and()
                 .logout()
-                .permitAll();
+                .permitAll()
+                .and()
+                .csrf().disable();
     }
 
     @Bean

@@ -109,10 +109,14 @@
     </div>
 </nav>
 <!-- Боковая панель -->
+
 <div class="sidebar">
-    <a th:href="@{/user}"
-       th:classappend="${#httpServletRequest.requestURI.contains('/user') ? 'active' : ''}"
-       sec:authorize="hasRole('USER')">User</a>
+    <a th:href="@{/admin}"
+       th:classappend="${#httpServletRequest.requestURI.contains('/admin') ? 'active' : ''}"
+       sec:authorize="hasRole('ADMIN')">Admin</a>
+    <a th:href="@{/admin/user}"
+       th:classappend="${#httpServletRequest.requestURI.contains('/admin/user') ? 'active' : ''}"
+       sec:authorize="hasAnyRole('USER','ADMIN')">User</a>
 </div>
 <!-- Основной контент -->
 <h1 class="fw-semibold mt-4">User Profile</h1>

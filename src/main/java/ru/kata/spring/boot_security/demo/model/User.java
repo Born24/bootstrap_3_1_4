@@ -20,7 +20,7 @@ public class User implements UserDetails {
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
 
@@ -54,8 +54,7 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public User() {
-    }
+    public User() {}
 
     public Set<Role> getRoles() {
         return roles;
@@ -95,6 +94,23 @@ public class User implements UserDetails {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

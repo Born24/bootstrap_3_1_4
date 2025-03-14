@@ -4,38 +4,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/")
 public class UsersController {
 
     private final UserService userService;
+    private final RoleService roleService;
 
     @Autowired
-    public UsersController(UserService userService) {
+    public UsersController(UserService userService, RoleService roleService) {
         this.userService = userService;
+        this.roleService = roleService;
     }
 
     @GetMapping
     public String listUsers(Model model) {
         model.addAttribute("users", userService.findAll());
-        return "users";
-    }
-
-    @GetMapping("/findById")
-    public String findById(@RequestParam("id") Long id, Model model) {
-        User user = userService.findById(id);
-        model.addAttribute("user", user);
-
-        return "findById";
+        return "login";
     }
 
     @PostMapping("/addUser")
-    public String saveUser(@ModelAttribute("user") User user) {
+    public String saveUser(@ModelAttribute("user") User user, @RequestParam("roleIds") List<Long> roleIds) {
+        Set<Role> roles = roleService.findRolesByIds(roleIds);
+        user.setRoles(roles);
         userService.add(user);
         return "redirect:/admin";
     }
@@ -46,11 +46,13 @@ public class UsersController {
         model.addAttribute("user", user);
 
         return "edit";
-
     }
 
-    @PostMapping("/update/{id}")
-    public String updateUser(@ModelAttribute("user") User user, @PathVariable("id") Long id) {
+    @PutMapping("/update/{id}")
+    public String updateUser(@ModelAttribute("user") User user, @PathVariable("id") Long id,
+                             @RequestParam("roleIds") List<Long> roleIds) {
+        Set<Role> roles = roleService.findRolesByIds(roleIds);
+        user.setRoles(roles);
         user.setId(id);
         userService.update(user);
 
@@ -64,13 +66,6 @@ public class UsersController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/users/{id}")
-    public String viewUser(@PathVariable Long id, Model model) {
-        User user = userService.findById(id);
-        model.addAttribute("user", user);
-
-        return "show";
-    }
 
     @GetMapping("/user")
     public String userProfile(Principal principal, Model model) {
@@ -78,7 +73,24 @@ public class UsersController {
         User user = userService.findByUsername(username);
         model.addAttribute("user", user);
 
-        return "user";
+        if (user.getRoles().stream().anyMatch(role -> role.getRole().equals("ROLE_ADMIN"))) {
+            return "admin_user";
+        } else {
+            return "user";
+        }
+
     }
+
+    @GetMapping("/addUser")
+    public String showAddUserForm(Model model) {
+
+        model.addAttribute("user", new User()); // Передаем новый объект User
+
+        model.addAttribute("role", roleService.findAllRoles()); // Передаем список всех ролей
+
+        return "addUser";
+    }
+
+
 }
 

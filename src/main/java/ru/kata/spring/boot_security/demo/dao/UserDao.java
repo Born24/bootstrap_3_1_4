@@ -17,5 +17,8 @@ public interface UserDao {
     void delete(Long id);
 
     User findByUsername(String username);
+/*
+    List<User> findUsersByRole(String role);
+*/
 
 }

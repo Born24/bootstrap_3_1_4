@@ -14,6 +14,8 @@ import ru.kata.spring.boot_security.demo.model.User;
 
 import java.util.Collection;
 import java.util.List;
+
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -21,9 +23,12 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserDao userDao;
 
+    private final RoleService roleService;
+
     @Autowired
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao, RoleService roleService) {
         this.userDao = userDao;
+        this.roleService = roleService;
     }
 
     @Override
@@ -80,4 +85,11 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public void addUserWithRoles(User user, List<Long> roleIds) {
+        Set<Role> roles = roleService.findRolesByIds(roleIds);
+        user.setRoles(roles);
+        userDao.add(user);
+    }
 }

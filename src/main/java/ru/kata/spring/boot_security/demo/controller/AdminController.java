@@ -6,26 +6,28 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
     private final UserService userService;
+    private final RoleService roleService;
 
     @Autowired
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
+        this.roleService = roleService;
     }
 
     @GetMapping
     public String adminPage(Model model) {
-        List<User> users = userService.findAll();
-        model.addAttribute("users", users);
-        return "admin"; // Возвращает шаблон 'admin'
+        model.addAttribute("user", new User()); // Передаем новый объект User в модель
+        model.addAttribute("users", userService.findAll()); // Передаем список пользователей
+        model.addAttribute("role", roleService.findAllRoles());
+        return "admin";
     }
 
 
