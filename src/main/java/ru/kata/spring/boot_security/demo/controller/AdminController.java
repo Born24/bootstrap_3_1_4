@@ -40,14 +40,6 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/update/{id}")
-    public String editUserForm(@PathVariable("id") Long id, Model model) {
-        User user = userService.findById(id);
-        model.addAttribute("user", user);
-
-        return "edit";
-    }
-
     @PutMapping("/update/{id}")
     public String updateUser(@ModelAttribute("user") User user, @PathVariable("id") Long id,
                              @RequestParam("roleIds") List<Long> roleIds) {

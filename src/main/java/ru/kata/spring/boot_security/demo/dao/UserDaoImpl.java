@@ -25,11 +25,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User findById(Long id) {
-        return entityManager.find(User.class, id);
-    }
-
-    @Override
     @Transactional
     public void add(User user) {
         if (user.getId() == null) {

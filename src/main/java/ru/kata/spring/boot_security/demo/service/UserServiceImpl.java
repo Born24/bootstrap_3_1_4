@@ -21,23 +21,17 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserDao userDao;
 
+    private final UserDao userDao;
 
     @Autowired
     public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
-
     }
 
     @Override
     public List<User> findAll() {
         return userDao.findAll();
-    }
-
-    @Override
-    public User findById(Long id) {
-        return userDao.findById(id);
     }
 
     @Override
@@ -69,6 +63,7 @@ public class UserServiceImpl implements UserService {
         User user = findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException(String.format("No user found with username '%s'", username));
+
         }
 
         return new org.springframework.security.core.userdetails.User(
@@ -83,6 +78,4 @@ public class UserServiceImpl implements UserService {
                 .map(r -> new SimpleGrantedAuthority(r.getRole()))
                 .collect(Collectors.toList());
     }
-
-
 }
