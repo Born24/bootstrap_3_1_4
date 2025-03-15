@@ -25,7 +25,6 @@ public interface UserService extends UserDetailsService {
     @Override
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 
-    void addUserWithRoles(User user, List<Long> roleIds);
 
 
 }

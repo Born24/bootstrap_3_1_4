@@ -8,9 +8,5 @@ import java.util.Set;
 public interface RoleDao {
     List<Role> findAllRoles();
 
-    Role findRoleById(Long id);
-
-    void addRole(Role role);
-
     Set<Role> findRolesByIds(List<Long> roleIds);
 }

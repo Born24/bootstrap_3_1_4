@@ -9,9 +9,5 @@ public interface RoleService {
 
     List<Role> findAllRoles();
 
-    Role findRoleById(Long id);
-
-    void addRole(Role role);
-
     Set<Role> findRolesByIds(List<Long> roleIds);
 }
