@@ -12,6 +12,8 @@ public interface UserService extends UserDetailsService {
 
     List<User> findAll();
 
+    List<User> findAllWithRoles();
+
     void add(User user);
 
     void update(User user);

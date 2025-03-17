@@ -1,11 +1,14 @@
 package ru.kata.spring.boot_security.demo.service;
 
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
@@ -25,6 +28,10 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
 
     @Autowired
+    @Lazy
+    private  PasswordEncoder passwordEncoder;
+
+    @Autowired
     public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
     }
@@ -36,8 +43,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public List<User> findAllWithRoles() {
+        List<User> users = userDao.findAll();
+        for (User user : users) {
+            Hibernate.initialize(user.getRoles());
+        }
+        return users;
+    }
+
+    @Override
+    @Transactional
     public void add(User user) {
+        user.setActive(true);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.add(user);
+
     }
 
     @Override
@@ -54,22 +74,27 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User findByUsername(String username) {
-        return userDao.findByUsername(username);
+        User user =  userDao.findByUsername(username);
+        if(user != null){
+            Hibernate.initialize(user.getRoles());
+        }
+        return user;
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username);
+        User user = userDao.findByUsername(username);
+
         if (user == null) {
+            System.out.println("User not found: " + username);
             throw new UsernameNotFoundException(String.format("No user found with username '%s'", username));
 
         }
+        Hibernate.initialize(user.getRoles());
+        System.out.println("User found: " + user.getUsername() + " with roles " + user.getRoles());
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                mapRolesToAuthorities(user.getRoles()));
+        return user;
 
     }
 

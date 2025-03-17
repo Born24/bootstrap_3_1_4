@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.controller;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,7 +10,6 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
@@ -26,11 +26,6 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-    @GetMapping
-    public String listUsers(Model model) {
-        model.addAttribute("users", userService.findAll());
-        return "login";
-    }
 
     @PostMapping("/addUser")
     public String saveUser(@ModelAttribute("user") User user, @RequestParam("roleIds") List<Long> roleIds) {
@@ -61,17 +56,12 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String adminPage(Model model) {
-        model.addAttribute("user", new User()); // Передаем новый объект User в модель
-        model.addAttribute("users", userService.findAll()); // Передаем список пользователей
+        List<User> users = userService.findAllWithRoles();
+        model.addAttribute("user", new User());
+        model.addAttribute("users", users);
         model.addAttribute("role", roleService.findAllRoles());
+
         return "admin";
     }
 
-    @GetMapping("admin/user")
-    public String adminUserProfile(Principal principal, Model model) {
-        String username = principal.getName();
-        User user = userService.findByUsername(username);
-        model.addAttribute("user", user);
-        return "admin_user"; // Возвращаем страницу для администратора
-    }
 }

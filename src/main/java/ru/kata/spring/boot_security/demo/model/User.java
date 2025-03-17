@@ -33,7 +33,7 @@ public class User implements UserDetails {
     private Integer age;
 
     @Column(name = "roles")
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -41,7 +41,8 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
-    private boolean isActive;
+    @Column(name="is_active")
+    private boolean isActive = true;
 
     public User(String username, String password, String name, String lastName, Integer age, boolean isActive, Set<Role> roles) {
         this.username = username;

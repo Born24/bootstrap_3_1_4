@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.controller;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +25,9 @@ public class UsersController {
     public String userProfile(Principal principal, Model model) {
         String username = principal.getName();
         User user = userService.findByUsername(username);
+        Hibernate.initialize(user.getRoles());
+
         model.addAttribute("user", user);
-        return "user_profile"; // Возвращаем страницу для обычного пользователя
+        return "user_profile";
     }
 }

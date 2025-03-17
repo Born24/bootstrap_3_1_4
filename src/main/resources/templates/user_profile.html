@@ -1,3 +1,5 @@
+<!--user_profile.html-->
+
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
@@ -110,9 +112,16 @@
 </nav>
 <!-- Боковая панель -->
 <div class="sidebar">
+    <!-- Кнопка "Admin" будет отображаться только для пользователей с ролью ADMIN -->
+    <a th:href="@{/admin}"
+       th:classappend="${#httpServletRequest.requestURI.contains('/admin') ? 'active' : ''}"
+       sec:authorize="hasRole('ADMIN')">Admin</a>
+
+
+    <!-- Кнопка "User" будет отображаться для пользователей с ролью USER или ADMIN -->
     <a th:href="@{/user}"
        th:classappend="${#httpServletRequest.requestURI.contains('/user') ? 'active' : ''}"
-       sec:authorize="hasRole('USER')">User</a>
+       sec:authorize="hasAnyRole('USER','ADMIN')">User</a>
 </div>
 <!-- Основной контент -->
 <h1 class="fw-semibold mt-4">User Profile</h1>
