@@ -1,7 +1,8 @@
 <!--user_profile.html-->
 
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -117,15 +118,16 @@
        th:classappend="${#httpServletRequest.requestURI.contains('/admin') ? 'active' : ''}"
        sec:authorize="hasRole('ADMIN')">Admin</a>
 
-
-    <!-- Кнопка "User" будет отображаться для пользователей с ролью USER или ADMIN -->
+    <!-- Кнопка "User" должна отображаться для USER и ADMIN -->
     <a th:href="@{/user}"
        th:classappend="${#httpServletRequest.requestURI.contains('/user') ? 'active' : ''}"
-       sec:authorize="hasAnyRole('USER','ADMIN')">User</a>
+       sec:authorize="hasAnyRole('USER', 'ADMIN')">User</a>
 </div>
 <!-- Основной контент -->
 <h1 class="fw-semibold mt-4">User Profile</h1>
 <div class="container mt-4">
+
+
     <div class="card">
         <div th:if="${user}">
             <table class="table">

@@ -144,8 +144,6 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isEnabled() {
-        return isActive;
-    }
+    public boolean isEnabled() {return isActive;}
 
 }

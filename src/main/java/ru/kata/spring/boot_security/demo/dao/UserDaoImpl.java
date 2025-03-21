@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.dao;
 
 
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
@@ -56,7 +57,15 @@ public class UserDaoImpl implements UserDao {
 
         List<User> users = query.getResultList();
 
-        return users.isEmpty() ? null : users.get(0);
+        if (!users.isEmpty()) {
+            User user = users.get(0);
+            Hibernate.initialize(user.getRoles());
+            System.out.println("User roles: " + user.getRoles()); // Отладочный вывод
+
+            return user;
+        }
+
+        return null;
     }
 
 }
